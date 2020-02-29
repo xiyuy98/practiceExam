@@ -30,7 +30,33 @@ p + geom_point() +
 ``` r
 weather_df2 <- weather_df1 %>% 
   pivot_wider(names_from = day_of_year, values_from =avg_temp)
+head(weather_df2)
 ```
+
+    ## # A tibble: 3 x 365
+    ##   origin   `1`   `2`   `3`   `4`   `5`   `6`   `7`   `8`   `9`  `10`  `11`  `12`
+    ##   <chr>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+    ## 1 EWR     37.0  28.7  30.0  34.9  37.2  40.1  40.6  40.1  43.2  43.8  41.2  45.0
+    ## 2 JFK     37.0  28.7  30.0  34.9  37.2  40.1  40.6  40.1  43.2  43.8  41.2  45.0
+    ## 3 LGA     37.0  28.7  30.0  34.9  37.2  40.1  40.6  40.1  43.2  43.8  41.2  45.0
+    ## # ... with 352 more variables: `13` <dbl>, `14` <dbl>, `15` <dbl>, `16` <dbl>,
+    ## #   `17` <dbl>, `18` <dbl>, `19` <dbl>, `20` <dbl>, `21` <dbl>, `22` <dbl>,
+    ## #   `23` <dbl>, `24` <dbl>, `25` <dbl>, `26` <dbl>, `27` <dbl>, `28` <dbl>,
+    ## #   `29` <dbl>, `30` <dbl>, `31` <dbl>, `32` <dbl>, `33` <dbl>, `34` <dbl>,
+    ## #   `35` <dbl>, `36` <dbl>, `37` <dbl>, `38` <dbl>, `39` <dbl>, `40` <dbl>,
+    ## #   `41` <dbl>, `42` <dbl>, `43` <dbl>, `44` <dbl>, `45` <dbl>, `46` <dbl>,
+    ## #   `47` <dbl>, `48` <dbl>, `49` <dbl>, `50` <dbl>, `51` <dbl>, `52` <dbl>,
+    ## #   `53` <dbl>, `54` <dbl>, `55` <dbl>, `56` <dbl>, `57` <dbl>, `58` <dbl>,
+    ## #   `59` <dbl>, `60` <dbl>, `61` <dbl>, `62` <dbl>, `63` <dbl>, `64` <dbl>,
+    ## #   `65` <dbl>, `66` <dbl>, `67` <dbl>, `68` <dbl>, `69` <dbl>, `70` <dbl>,
+    ## #   `71` <dbl>, `72` <dbl>, `73` <dbl>, `74` <dbl>, `75` <dbl>, `76` <dbl>,
+    ## #   `77` <dbl>, `78` <dbl>, `79` <dbl>, `80` <dbl>, `81` <dbl>, `82` <dbl>,
+    ## #   `83` <dbl>, `84` <dbl>, `85` <dbl>, `86` <dbl>, `87` <dbl>, `88` <dbl>,
+    ## #   `89` <dbl>, `90` <dbl>, `91` <dbl>, `92` <dbl>, `93` <dbl>, `94` <dbl>,
+    ## #   `95` <dbl>, `96` <dbl>, `97` <dbl>, `98` <dbl>, `99` <dbl>, `100` <dbl>,
+    ## #   `101` <dbl>, `102` <dbl>, `103` <dbl>, `104` <dbl>, `105` <dbl>,
+    ## #   `106` <dbl>, `107` <dbl>, `108` <dbl>, `109` <dbl>, `110` <dbl>,
+    ## #   `111` <dbl>, `112` <dbl>, ...
 
 #### For each (airport, day) contruct a tidy data set of the airport’s “performance” as the proportion of flights that departed less than an hour late.
 
@@ -43,11 +69,21 @@ flights_df1 <- flights %>%
   mutate(n2 = n()) %>% 
   mutate(performance=n2/n1) %>% 
   group_by(origin, day_of_year) %>% 
-  select(performance) %>% 
+  select(origin, day_of_year, performance) %>% 
   distinct()
+head(flights_df1)
 ```
 
-    ## Adding missing grouping variables: `origin`, `day_of_year`
+    # A tibble: 6 x 3
+    # Groups:   origin, day_of_year [6]
+      origin day_of_year performance
+      <chr>        <dbl>       <dbl>
+    1 EWR              1       0.915
+    2 LGA              1       0.95 
+    3 JFK              1       0.943
+    4 JFK              2       0.947
+    5 EWR              2       0.823
+    6 LGA              2       0.967
 
 #### Construct a tidy data set to that give weather summaries for each (airport, day). Use the total precipitation, minimum visibility, maximum wind\_gust, and average wind\_speed.
 
@@ -59,7 +95,20 @@ weather_df3 <- weather %>%
             min_visibiligy=min(visib, na.rm=T),
             max_wind_gust=max(wind_gust, na.rm=T),
             avg_wind_speed=mean(wind_speed, na.rm=T))
+head(weather_df3)
 ```
+
+    ## # A tibble: 6 x 6
+    ## # Groups:   origin [1]
+    ##   origin day_of_year total_precipita~ min_visibiligy max_wind_gust
+    ##   <chr>        <dbl>            <dbl>          <dbl>         <dbl>
+    ## 1 EWR              1                0             10          26.5
+    ## 2 EWR              2                0             10          26.5
+    ## 3 EWR              3                0             10        -Inf  
+    ## 4 EWR              4                0             10          31.1
+    ## 5 EWR              5                0             10          26.5
+    ## 6 EWR              6                0              6          19.6
+    ## # ... with 1 more variable: avg_wind_speed <dbl>
 
 #### Construct a linear model to predict the performance of each (airport,day) using the weather summaries and a “fixed effect” for each airport. Display the summaries.
 

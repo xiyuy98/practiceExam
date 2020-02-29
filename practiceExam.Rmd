@@ -48,11 +48,12 @@ p + geom_point() +
 ```{r}
 weather_df2 <- weather_df1 %>% 
   pivot_wider(names_from = day_of_year, values_from =avg_temp)
+head(weather_df2)
 ```
 
 #### For each (airport, day) contruct a tidy data set of the airport's "performance" as the proportion of flights that departed less than an hour late.
 
-```{r}
+```{r, comment=NA, warning=FALSE}
 flights_df1 <- flights %>% 
   mutate(day_of_year = yday(time_hour)) %>% 
   group_by(origin, day_of_year) %>% 
@@ -61,8 +62,9 @@ flights_df1 <- flights %>%
   mutate(n2 = n()) %>% 
   mutate(performance=n2/n1) %>% 
   group_by(origin, day_of_year) %>% 
-  select(performance) %>% 
+  select(origin, day_of_year, performance) %>% 
   distinct()
+head(flights_df1)
 ```
 
 #### Construct a tidy data set to that give weather summaries for each (airport, day). Use the total precipitation, minimum visibility, maximum wind_gust, and average wind_speed.
@@ -75,6 +77,7 @@ weather_df3 <- weather %>%
             min_visibiligy=min(visib, na.rm=T),
             max_wind_gust=max(wind_gust, na.rm=T),
             avg_wind_speed=mean(wind_speed, na.rm=T))
+head(weather_df3)
 ```
 
 #### Construct a linear model to predict the performance of each (airport,day) using the weather summaries and a "fixed effect" for each airport. Display the summaries.
